@@ -59,7 +59,7 @@ resource "aws_route_table_association" "rt-public-subnets" {
   route_table_id = aws_route_table.public-rt.id
 }
 
-resource "aws_security_group" "alb" {
+resource "aws_security_group" "lb" {
   vpc_id = aws_vpc.vpc.id
 
   egress {
@@ -84,11 +84,11 @@ resource "aws_security_group" "alb" {
   }
 
   tags = {
-    Name = "${var.instance_name}-alb-sec-grp"
+    Name = "${var.instance_name}-lb-sec-grp"
   }
 }
 
-resource "aws_security_group" "ec2" {
+resource "aws_security_group" "vm" {
   vpc_id = aws_vpc.vpc.id
 
   egress {
@@ -116,11 +116,11 @@ resource "aws_security_group" "ec2" {
   }
 
   tags = {
-    Name = "${var.instance_name}-ec2-sec-grp"
+    Name = "${var.instance_name}-vm-sec-grp"
   }
 }
 
-resource "aws_security_group" "rds" {
+resource "aws_security_group" "database" {
   vpc_id = aws_vpc.vpc.id
 
   egress {
@@ -134,11 +134,11 @@ resource "aws_security_group" "rds" {
     from_port       = var.database_port
     to_port         = var.database_port
     protocol        = "tcp"
-    security_groups = [aws_security_group.ec2.id]
+    security_groups = [aws_security_group.vm.id]
   }
 
   tags = {
-    Name = "${var.instance_name}-rds-sec-grp"
+    Name = "${var.instance_name}-database-sec-grp"
   }
 }
 
@@ -156,7 +156,7 @@ resource "aws_security_group" "cache" {
     from_port       = var.cache_port
     to_port         = var.cache_port
     protocol        = "tcp"
-    security_groups = [aws_security_group.ec2.id]
+    security_groups = [aws_security_group.vm.id]
   }
 
   tags = {

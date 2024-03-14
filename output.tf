@@ -1,23 +1,23 @@
-output "vpc-id" {
+output "vpc_id" {
   value = aws_vpc.vpc.id
 }
 
-output "private-subnets" {
+output "private_subnets" {
   value = aws_subnet.private-subnets[*].id
 }
 
-output "alb-sec-group" {
-  value = aws_security_group.alb.id
+output "lb_sec_group" {
+  value = aws_security_group.lb.id
 }
 
-output "ec2-sec-group" {
-  value = aws_security_group.ec2.id
+output "vm_sec_group" {
+  value = aws_security_group.vm.id
 }
 
-output "rds-sec-group" {
-  value = aws_security_group.rds.id
+output "database_sec_group" {
+  value = aws_security_group.database.id
 }
 
-output "ec-sec-group" {
+output "cache_sec_group" {
   value = aws_security_group.cache.id
 }

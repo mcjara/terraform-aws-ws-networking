@@ -2,7 +2,7 @@ variable "instance_name" {
   type = string
 }
 
-variable "application_ports" {
+variable "vm_ports" {
   type = list(number)
 }
 
