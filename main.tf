@@ -136,6 +136,13 @@ resource "aws_security_group" "ec2_instance_connect" {
     cidr_blocks = data.aws_ip_ranges.aws-connect-ip-address-range.cidr_blocks
   }
 
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   tags = {
     Name = "${var.instance_name}-ec2-instance-connect-sec-grp"
   }
