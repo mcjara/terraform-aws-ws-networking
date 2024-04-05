@@ -163,7 +163,7 @@ resource "aws_security_group" "vm" {
     from_port       = 22
     to_port         = 22
     protocol        = "tcp"
-    security_groups = [aws_security_group.ec2_instance_connect]
+    security_groups = [aws_security_group.ec2_instance_connect.id]
   }
 
   dynamic "ingress" {
