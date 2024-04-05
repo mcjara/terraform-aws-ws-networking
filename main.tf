@@ -126,6 +126,29 @@ resource "aws_security_group" "lb" {
   }
 }
 
+resource "aws_security_group" "ec2_instance_connect" {
+  vpc_id = aws_vpc.vpc.id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = data.aws_ip_ranges.aws-connect-ip-address-range.cidr_blocks
+  }
+
+  tags = {
+    Name = "${var.instance_name}-ec2-instance-connect-sec-grp"
+  }
+}
+
+resource "aws_ec2_instance_connect_endpoint" "ec2_instance_connect" {
+  subnet_id = aws_subnet.private-subnets[0].id
+
+  security_group_ids = [
+    aws_security_group.ec2_instance_connect.id,
+  ]
+}
+
 resource "aws_security_group" "vm" {
   vpc_id = aws_vpc.vpc.id
 
@@ -137,10 +160,10 @@ resource "aws_security_group" "vm" {
   }
 
   ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = data.aws_ip_ranges.aws-connect-ip-address-range.cidr_blocks
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    security_groups = [aws_security_group.ec2_instance_connect]
   }
 
   dynamic "ingress" {
