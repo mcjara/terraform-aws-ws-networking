@@ -4,6 +4,12 @@ variable "VPC_CIDR_BLOCK" {
   default     = "10.0.0.0/16"
 }
 
+variable "VPC_PUBLIC_SUBNET_COUNT" {
+  type        = number
+  description = "Number of private subnets to create."
+  default     = 2
+}
+
 variable "VPC_PRIVATE_SUBNET_COUNT" {
   type        = number
   description = "Number of private subnets to create."
@@ -13,7 +19,7 @@ variable "VPC_PRIVATE_SUBNET_COUNT" {
 variable "VPC_PUBLIC_SUBNETS_CIDR_BLOCK" {
   type        = list(string)
   description = "CIDR Block for Public Subnets in VPC"
-  default     = ["10.0.112.0/20"]
+  default     = ["10.0.96.0/20", "10.0.112.0/20"]
 }
 
 variable "VPC_PRIVATE_SUBNETS_CIDR_BLOCK" {

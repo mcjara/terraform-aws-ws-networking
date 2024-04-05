@@ -20,14 +20,15 @@ resource "aws_vpc" "vpc" {
   }
 }
 
-resource "aws_subnet" "public-subnet" {
-  cidr_block              = var.VPC_PUBLIC_SUBNETS_CIDR_BLOCK[0]
+resource "aws_subnet" "public-subnets" {
+  count                   = var.VPC_PUBLIC_SUBNET_COUNT
+  cidr_block              = var.VPC_PUBLIC_SUBNETS_CIDR_BLOCK[count.index]
   vpc_id                  = aws_vpc.vpc.id
   map_public_ip_on_launch = true
-  availability_zone       = data.aws_availability_zones.available.names[0]
+  availability_zone       = data.aws_availability_zones.available.names[count.index]
 
   tags = {
-    Name = "${var.instance_name}-public-subnet-0"
+    Name = "${var.instance_name}-public-subnet-${count.index}"
   }
 }
 
@@ -53,7 +54,7 @@ resource "aws_internet_gateway" "igw" {
 
 resource "aws_nat_gateway" "nat" {
   allocation_id = aws_eip.nat.id
-  subnet_id     = aws_subnet.public-subnet.id
+  subnet_id     = aws_subnet.public-subnets[0].id
 }
 
 resource "aws_eip" "nat" {
@@ -74,7 +75,8 @@ resource "aws_route_table" "public-rt" {
 }
 
 resource "aws_route_table_association" "public" {
-  subnet_id      = aws_subnet.public-subnet.id
+  count          = var.VPC_PUBLIC_SUBNET_COUNT
+  subnet_id      = aws_subnet.public-subnets[count.index].id
   route_table_id = aws_route_table.public-rt.id
 }
 
