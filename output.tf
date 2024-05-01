@@ -25,3 +25,7 @@ output "database_sec_group" {
 output "cache_sec_group" {
   value = aws_security_group.cache.id
 }
+
+output "efs_sec_group" {
+  value = aws_security_group.efs.id
+}

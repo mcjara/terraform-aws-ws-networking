@@ -234,3 +234,17 @@ resource "aws_security_group" "cache" {
   }
 }
 
+resource "aws_security_group" "efs" {
+  vpc_id = aws_vpc.vpc.id
+
+  ingress {
+    from_port       = 2049
+    to_port         = 2049
+    protocol        = "tcp"
+    security_groups = [aws_security_group.vm.id]
+  }
+
+  tags = {
+    Name = "${var.instance_name}-efs-sec-grp"
+  }
+}
