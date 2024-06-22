@@ -19,11 +19,11 @@ output "vm_sec_group" {
 }
 
 output "database_sec_group" {
-  value = aws_security_group.database[0].id != null ? aws_security_group.database[0].id : ""
+  value = length(aws_security_group.database) > 0 ? aws_security_group.database[0].id : ""
 }
 
 output "cache_sec_group" {
-  value = aws_security_group.cache[0].id != null ? aws_security_group.cache[0].id : ""
+  value = length(aws_security_group.cache) > 0 ? aws_security_group.cache[0].id : ""
 }
 
 output "efs_sec_group" {
