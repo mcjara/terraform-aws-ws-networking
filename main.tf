@@ -191,6 +191,7 @@ resource "aws_security_group" "vm" {
 }
 
 resource "aws_security_group" "database" {
+  count = var.database_port != 0 ? 1 : 0
   vpc_id = aws_vpc.vpc.id
 
   egress {
@@ -213,6 +214,7 @@ resource "aws_security_group" "database" {
 }
 
 resource "aws_security_group" "cache" {
+  count = var.cache_port != 0 ? 1 : 0
   vpc_id = aws_vpc.vpc.id
 
   egress {
