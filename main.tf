@@ -191,7 +191,6 @@ resource "aws_security_group" "vm" {
 }
 
 resource "aws_security_group" "database" {
-  count = var.database_port != 0 ? 1 : 0
   vpc_id = aws_vpc.vpc.id
 
   egress {
@@ -214,7 +213,6 @@ resource "aws_security_group" "database" {
 }
 
 resource "aws_security_group" "cache" {
-  count = var.cache_port != 0 ? 1 : 0
   vpc_id = aws_vpc.vpc.id
 
   egress {
@@ -240,8 +238,8 @@ resource "aws_security_group" "efs" {
   vpc_id = aws_vpc.vpc.id
 
   ingress {
-    from_port       = 2049
-    to_port         = 2049
+    from_port       = var.efs_port
+    to_port         = var.efs_port
     protocol        = "tcp"
     security_groups = [aws_security_group.vm.id]
   }

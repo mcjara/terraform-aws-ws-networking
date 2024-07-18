@@ -13,3 +13,7 @@ variable "database_port" {
 variable "cache_port" {
   type = number
 }
+
+variable "efs_port" {
+  type = number
+}
