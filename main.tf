@@ -21,7 +21,7 @@ resource "aws_vpc" "vpc" {
 }
 
 data "aws_security_group" "default" {
-  vpc_id = aws_vpc.vpc.default_security_group_id
+  id = aws_vpc.vpc.default_security_group_id
 }
 
 # Remove all inbound rules from the default security group
