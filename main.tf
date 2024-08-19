@@ -24,32 +24,12 @@ data "aws_security_group" "default" {
   id = aws_vpc.vpc.default_security_group_id
 }
 
-# Remove all inbound rules from the default security group
-resource "aws_security_group_rule" "default_inbound" {
-  security_group_id = data.aws_security_group.default.id
-  type              = "ingress"
-  protocol          = "-1"  # -1 means all protocols
-  from_port         = 0
-  to_port           = 0
-  cidr_blocks       = ["0.0.0.0/0"]
+# Modify the default security group to revoke all rules
+resource "aws_security_group" "default" {
+  security_group_id = aws_vpc.vpc.default_security_group_id
 
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-# Remove all outbound rules from the default security group
-resource "aws_security_group_rule" "default_outbound" {
-  security_group_id = data.aws_security_group.default.id
-  type              = "egress"
-  protocol          = "-1"  # -1 means all protocols
-  from_port         = 0
-  to_port           = 0
-  cidr_blocks       = ["0.0.0.0/0"]
-
-  lifecycle {
-    create_before_destroy = true
-  }
+  # This will remove all rules from the security group when the resource is applied
+  revoke_rules_on_delete = true
 }
 
 /*
