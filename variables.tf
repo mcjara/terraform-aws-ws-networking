@@ -17,3 +17,8 @@ variable "cache_port" {
 variable "efs_port" {
   type = number
 }
+
+variable "logs_bucket_arn" {
+  type        = string
+  description = ""
+}

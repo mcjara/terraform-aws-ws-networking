@@ -20,6 +20,52 @@ resource "aws_vpc" "vpc" {
   }
 }
 
+data "aws_security_group" "default" {
+  vpc_id = aws_vpc.vpc.id
+}
+
+# Remove all inbound rules from the default security group
+resource "aws_security_group_rule" "default_inbound" {
+  security_group_id = data.aws_security_group.default.id
+  type              = "ingress"
+  protocol          = "-1"  # -1 means all protocols
+  from_port         = 0
+  to_port           = 0
+  cidr_blocks       = ["0.0.0.0/0"]
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# Remove all outbound rules from the default security group
+resource "aws_security_group_rule" "default_outbound" {
+  security_group_id = data.aws_security_group.default.id
+  type              = "egress"
+  protocol          = "-1"  # -1 means all protocols
+  from_port         = 0
+  to_port           = 0
+  cidr_blocks       = ["0.0.0.0/0"]
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+/*
+resource "aws_flow_log" "vpc_flow_log" {
+  vpc_id               = aws_vpc.vpc.id
+  traffic_type         = "ALL"
+  log_destination_type = "s3"
+  log_destination      = var.logs_bucket_arn
+  log_format           = "${var.logs_bucket_arn}/flow-logs/"
+
+  destination_options {
+    per_hour_partition = true
+  }
+}
+ */
+
 resource "aws_subnet" "public-subnets" {
   count                   = var.VPC_PUBLIC_SUBNET_COUNT
   cidr_block              = var.VPC_PUBLIC_SUBNETS_CIDR_BLOCK[count.index]
