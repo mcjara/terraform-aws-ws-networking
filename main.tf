@@ -20,16 +20,11 @@ resource "aws_vpc" "vpc" {
   }
 }
 
-data "aws_security_group" "default" {
-  id = aws_vpc.vpc.default_security_group_id
-}
+resource "aws_default_security_group" "default" {
+  vpc_id = aws_vpc.vpc.id
 
-# Modify the default security group to revoke all rules
-resource "aws_security_group" "default" {
-  security_group_id = aws_vpc.vpc.default_security_group_id
-
-  # This will remove all rules from the security group when the resource is applied
-  revoke_rules_on_delete = true
+  ingress = []
+  egress  = []
 }
 
 /*
