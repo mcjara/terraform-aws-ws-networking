@@ -20,7 +20,6 @@ resource "aws_vpc" "vpc" {
   }
 }
 
-/*
 resource "aws_default_security_group" "default" {
   vpc_id = aws_vpc.vpc.id
 
@@ -31,8 +30,6 @@ resource "aws_default_security_group" "default" {
     Name = "${var.instance_name}-default-sec-grp"
   }
 }
-
- */
 
 resource "aws_iam_role" "flow_logs_role" {
   name = "vpc-flow-logs-role"
