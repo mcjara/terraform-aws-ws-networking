@@ -52,6 +52,7 @@ resource "aws_iam_role" "flow_logs_role" {
 }
 
 resource "aws_iam_role_policy" "flow_logs_policy" {
+  count = var.logs_bucket_arn != "" ? 1 : 0
   name   = "vpc-flow-logs-policy"
   role   = aws_iam_role.flow_logs_role.id
   policy = jsonencode({
@@ -70,6 +71,7 @@ resource "aws_iam_role_policy" "flow_logs_policy" {
 }
 
 resource "aws_flow_log" "vpc_flow_log" {
+  count = var.logs_bucket_arn != "" ? 1 : 0
   vpc_id               = aws_vpc.vpc.id
   traffic_type         = "ALL"
   log_destination_type = "s3"
