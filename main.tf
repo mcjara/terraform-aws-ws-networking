@@ -32,7 +32,8 @@ resource "aws_default_security_group" "default" {
 }
 
 resource "aws_iam_role" "flow_logs_role" {
-  name = "vpc-flow-logs-role"
+  count = var.logs_bucket_arn != "" ? 1 : 0
+  name = "${var.instance_name}-vpc-flow-logs-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -50,8 +51,8 @@ resource "aws_iam_role" "flow_logs_role" {
 
 resource "aws_iam_role_policy" "flow_logs_policy" {
   count = var.logs_bucket_arn != "" ? 1 : 0
-  name   = "vpc-flow-logs-policy"
-  role   = aws_iam_role.flow_logs_role.id
+  name   = "${var.instance_name}-vpc-flow-logs-policy"
+  role   = aws_iam_role.flow_logs_role[0].id
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -79,7 +80,7 @@ resource "aws_flow_log" "vpc_flow_log" {
     per_hour_partition = true
   }
 
-  iam_role_arn =  aws_iam_role.flow_logs_role.arn
+  iam_role_arn =  aws_iam_role.flow_logs_role[0].arn
 }
 
 resource "aws_subnet" "public-subnets" {
