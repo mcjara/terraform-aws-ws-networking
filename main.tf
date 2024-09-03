@@ -16,18 +16,59 @@ resource "aws_vpc" "vpc" {
   instance_tenancy     = "default"
 
   tags = {
-    Name = var.instance_name
+    Name = "${var.instance_name}-vpc"
   }
 }
 
+/*
 resource "aws_default_security_group" "default" {
   vpc_id = aws_vpc.vpc.id
 
   ingress = []
   egress  = []
+
+  tags = {
+    Name = "${var.instance_name}-default-sec-grp"
+  }
 }
 
-/*
+ */
+
+resource "aws_iam_role" "flow_logs_role" {
+  name = "vpc-flow-logs-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "vpc-flow-logs.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "flow_logs_policy" {
+  name   = "vpc-flow-logs-policy"
+  role   = aws_iam_role.flow_logs_role.id
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "s3:PutObject",
+          "s3:GetBucketLocation"
+        ],
+        Resource = "${var.logs_bucket_arn}/flow-logs/*"
+      }
+    ]
+  })
+}
+
 resource "aws_flow_log" "vpc_flow_log" {
   vpc_id               = aws_vpc.vpc.id
   traffic_type         = "ALL"
@@ -38,8 +79,9 @@ resource "aws_flow_log" "vpc_flow_log" {
   destination_options {
     per_hour_partition = true
   }
+
+  iam_role_arn =  aws_iam_role.flow_logs_role.arn
 }
- */
 
 resource "aws_subnet" "public-subnets" {
   count                   = var.VPC_PUBLIC_SUBNET_COUNT
@@ -76,6 +118,10 @@ resource "aws_internet_gateway" "igw" {
 resource "aws_nat_gateway" "nat" {
   allocation_id = aws_eip.nat.id
   subnet_id     = aws_subnet.public-subnets[0].id
+
+  tags = {
+    Name = "${var.instance_name}-ngw"
+  }
 }
 
 resource "aws_eip" "nat" {
@@ -167,7 +213,7 @@ resource "aws_security_group" "ec2_instance_connect" {
   }
 
   tags = {
-    Name = "${var.instance_name}-ec2-instance-connect-sec-grp"
+    Name = "${var.instance_name}-ec2-ic-sec-grp"
   }
 }
 
