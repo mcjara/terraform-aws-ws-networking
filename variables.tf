@@ -22,3 +22,8 @@ variable "logs_bucket_arn" {
   type        = string
   description = ""
 }
+
+variable "allow_lb_cidr_block" {
+  type = list(string)
+  default = ["0.0.0.0/0"]
+}
